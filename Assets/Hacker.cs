@@ -6,18 +6,20 @@ public class Hacker : MonoBehaviour
 
 {
 	int level;
-	private string greeting = "Hello Tom";
+	const string menuHint = "Type 'menu' to go back";
+	const string greeting = "Hello Tom";
 	private enum Screen { MainMenu, Password, Win };
 	string[] levelNames = { "local library", "police station", "NASA" };
 	private string password;
 	private string[][] passwordIndex = 
 	{
-		new string[] { "books", "aisle", "self", "password", "font", "borrow" },
+		new string[] { "books", "aisle", "shelf", "password", "font", "borrow" },
 		new string[] { "prisoner", "handcuffs", "holster", "uniform", "arrest" },
 		new string[] { "starfield", "telescope", "environment", "exploration", "astronauts" }
 	};
-	private string passwordSuccess = "Password correct. Login successful!";
-	private string passwordFail = "Wrong password. Please try again:";
+	private const string passwordSuccess = "Password correct. Login successful!";
+	private const string passwordFail = "Wrong password. Please try again:";
+	string stage;
 	Screen currentScreen;
 
 	void Start()
@@ -67,15 +69,18 @@ public class Hacker : MonoBehaviour
 		if (isValidLevelNumber)
 		{
 			level = int.Parse(input);
-			StartGame(levelNames[(int.Parse(input) - 1)]);
+			stage = levelNames[(int.Parse(input) - 1)];
+			AskForPassword();
 		}
 		else if (input == "007")
 		{
 			Terminal.WriteLine("Please choose a valid level Mr. Bond");
+			Terminal.WriteLine(menuHint);
 		}
 		else
 		{
 			Terminal.WriteLine("Please choose a valid level");
+			Terminal.WriteLine(menuHint);
 		}
 	}
 
@@ -88,7 +93,7 @@ public class Hacker : MonoBehaviour
 		}
 		else
 		{
-			Terminal.WriteLine(passwordFail);
+			AskForPassword();
 		}
 
 	}
@@ -114,6 +119,7 @@ public class Hacker : MonoBehaviour
 (______(/
 "
 				);
+				Terminal.WriteLine(menuHint);
 				break;
 			case 2:
 				Terminal.WriteLine("Here is your badge...");
@@ -124,10 +130,10 @@ public class Hacker : MonoBehaviour
  \    .--.    /
   |  ( 19 )  |
   \   '--'   /
-   '--.  .--'
-       \/
+   '--------'
 "
 				);
+				Terminal.WriteLine(menuHint);
 				break;
 			case 3:
 				Terminal.WriteLine("That's one small step for you,\none giant leap for mankind...");
@@ -140,6 +146,7 @@ public class Hacker : MonoBehaviour
     '   '
 "
 				);
+				Terminal.WriteLine(menuHint);
 				break;
 			default:
 				Debug.LogError("Invalid level reached");
@@ -153,11 +160,21 @@ public class Hacker : MonoBehaviour
 
 	}
 
-	private void StartGame (string stage)
+	private void AskForPassword()
 	{
 		currentScreen = Screen.Password;
 		Terminal.ClearScreen();
-		switch(level)
+		SetRandomPassword();
+		print("current password: " + password);
+		Terminal.WriteLine("Trying to enter " + stage + " network\n");
+		Terminal.WriteLine("Enter your password, hint: " + password.Anagram() + "\n");
+		Terminal.WriteLine(menuHint);
+		print("Loading stage '" + stage + "' (level number " + level + ")");
+	}
+
+	private void SetRandomPassword()
+	{
+		switch (level)
 		{
 			case 1:
 				password = passwordIndex[0][Random.Range(0, passwordIndex[0].Length)];
@@ -172,9 +189,5 @@ public class Hacker : MonoBehaviour
 				Debug.LogError("Invalid level number");
 				break;
 		}
-		print("current password: " + password);
-		Terminal.WriteLine("Trying to enter " + stage + " network");
-		Terminal.WriteLine("Please enter your password:");
-		print("Loading stage '" + stage + "' (level number " + level + ")");
 	}
 }
