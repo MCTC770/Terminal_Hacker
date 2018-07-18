@@ -20,7 +20,7 @@ public class Hacker : MonoBehaviour
 	private string passwordFail = "Wrong password. Please try again:";
 	Screen currentScreen;
 
-void Start()
+	void Start()
 	{
 		ShowMainMenu(greeting);
 	}
@@ -68,7 +68,6 @@ void Start()
 		{
 			level = int.Parse(input);
 			StartGame(levelNames[(int.Parse(input) - 1)]);
-			//password = passwordIndex[(int.Parse(input) - 1)][4];
 		}
 		else if (input == "007")
 		{
@@ -85,11 +84,66 @@ void Start()
 
 		if (input == password)
 		{
-			Terminal.WriteLine(passwordSuccess);
+			DisplayWinScreen();
 		}
 		else
 		{
 			Terminal.WriteLine(passwordFail);
+		}
+
+	}
+
+	private void DisplayWinScreen()
+	{
+		currentScreen = Screen.Win;
+		Terminal.ClearScreen();
+		ShowLevelReward();
+	}
+
+	private void ShowLevelReward()
+	{
+		switch(level)
+		{
+			case 1:
+				Terminal.WriteLine("Have a book...");
+				Terminal.WriteLine(@"
+    _______
+   /      //
+  /      //
+ /______//
+(______(/
+"
+				);
+				break;
+			case 2:
+				Terminal.WriteLine("Here is your badge...");
+				Terminal.WriteLine(@"
+   ,   /\   ,
+  / '-'  '-' \
+ |   POLICE   |
+ \    .--.    /
+  |  ( 19 )  |
+  \   '--'   /
+   '--.  .--'
+       \/
+"
+				);
+				break;
+			case 3:
+				Terminal.WriteLine("That's one small step for you,\none giant leap for mankind...");
+				Terminal.WriteLine(@"
+      .
+     .'.
+     |o|
+    .'o'.
+    |.-.|
+    '   '
+"
+				);
+				break;
+			default:
+				Debug.LogError("Invalid level reached");
+				break;
 		}
 
 	}
@@ -106,18 +160,19 @@ void Start()
 		switch(level)
 		{
 			case 1:
-				password = passwordIndex[0][4];
+				password = passwordIndex[0][Random.Range(0, passwordIndex[0].Length)];
 				break;
 			case 2:
-				password = passwordIndex[1][4];
+				password = passwordIndex[1][Random.Range(0, passwordIndex[1].Length)];
 				break;
 			case 3:
-				password = passwordIndex[2][4];
+				password = passwordIndex[2][Random.Range(0, passwordIndex[2].Length)];
 				break;
 			default:
 				Debug.LogError("Invalid level number");
 				break;
 		}
+		print("current password: " + password);
 		Terminal.WriteLine("Trying to enter " + stage + " network");
 		Terminal.WriteLine("Please enter your password:");
 		print("Loading stage '" + stage + "' (level number " + level + ")");
