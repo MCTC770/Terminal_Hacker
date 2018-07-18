@@ -8,14 +8,17 @@ public class Hacker : MonoBehaviour
 	int level;
 	private string greeting = "Hello Tom";
 	private enum Screen { MainMenu, Password, Win };
-	private enum Levels { Level1, Level2, Level3 };
-	private string level1Password = "easy";
-	private string level2Password = "medium";
-	private string level3Password = "hard";
+	string[] levelNames = { "local library", "police station", "NASA" };
+	private string password;
+	private string[][] passwordIndex = 
+	{
+		new string[] { "books", "aisle", "self", "password", "font", "borrow" },
+		new string[] { "prisoner", "handcuffs", "holster", "uniform", "arrest" },
+		new string[] { "starfield", "telescope", "environment", "exploration", "astronauts" }
+	};
 	private string passwordSuccess = "Password correct. Login successful!";
 	private string passwordFail = "Wrong password. Please try again:";
 	Screen currentScreen;
-	Levels currentLevel;
 
 void Start()
 	{
@@ -60,23 +63,12 @@ void Start()
 
 	void RunMainMenu(string input)
 	{
-		if (input == "1")
+		bool isValidLevelNumber = (input == "1" || input == "2" || input == "3");
+		if (isValidLevelNumber)
 		{
-			level = 1;
-			currentLevel = Levels.Level1;
-			StartGame("local library");
-		}
-		else if (input == "2")
-		{
-			level = 2;
-			currentLevel = Levels.Level2;
-			StartGame("police station");
-		}
-		else if (input == "3")
-		{
-			level = 3;
-			currentLevel = Levels.Level3;
-			StartGame("NASA");
+			level = int.Parse(input);
+			StartGame(levelNames[(int.Parse(input) - 1)]);
+			//password = passwordIndex[(int.Parse(input) - 1)][4];
 		}
 		else if (input == "007")
 		{
@@ -90,39 +82,16 @@ void Start()
 
 	void RunPassword(string input)
 	{
-		if (currentLevel == Levels.Level1)
+
+		if (input == password)
 		{
-			if (input == level1Password)
-			{
-				Terminal.WriteLine(passwordSuccess);
-			}
-			else
-			{
-				Terminal.WriteLine(passwordFail);
-			}
+			Terminal.WriteLine(passwordSuccess);
 		}
-		else if (currentLevel == Levels.Level2)
+		else
 		{
-			if (input == level2Password)
-			{
-				Terminal.WriteLine(passwordSuccess);
-			}
-			else
-			{
-				Terminal.WriteLine(passwordFail);
-			}
+			Terminal.WriteLine(passwordFail);
 		}
-		else if (currentLevel == Levels.Level3)
-		{
-			if (input == level3Password)
-			{
-				Terminal.WriteLine(passwordSuccess);
-			}
-			else
-			{
-				Terminal.WriteLine(passwordFail);
-			}
-		}
+
 	}
 
 	void RunWin(string input)
@@ -133,6 +102,22 @@ void Start()
 	private void StartGame (string stage)
 	{
 		currentScreen = Screen.Password;
+		Terminal.ClearScreen();
+		switch(level)
+		{
+			case 1:
+				password = passwordIndex[0][4];
+				break;
+			case 2:
+				password = passwordIndex[1][4];
+				break;
+			case 3:
+				password = passwordIndex[2][4];
+				break;
+			default:
+				Debug.LogError("Invalid level number");
+				break;
+		}
 		Terminal.WriteLine("Trying to enter " + stage + " network");
 		Terminal.WriteLine("Please enter your password:");
 		print("Loading stage '" + stage + "' (level number " + level + ")");
